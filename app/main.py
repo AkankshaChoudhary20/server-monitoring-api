@@ -88,7 +88,7 @@ def metrics_prometheus():
 @app.get("/metrics/history")
 def metrics_history(limit: int = Query(default=50, ge=1, le=1000), db: Session = Depends(get_db)):
     rows = db.scalars(
-        select(MetricRecord).order_by(MetricRecord.timestamp.desc()).limit(limit)
+        select(MetricRecord).order_by(MetricRecord.timestamp.desc(), MetricRecord.id.desc()).limit(limit)
     ).all()
 
     return [
