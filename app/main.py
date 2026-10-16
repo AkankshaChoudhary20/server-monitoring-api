@@ -1,7 +1,7 @@
 import time
 from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI, Response
+from fastapi import Depends, FastAPI, Query, Response
 from prometheus_client import CONTENT_TYPE_LATEST
 from sqlalchemy import select
 from sqlalchemy.exc import OperationalError
@@ -86,7 +86,7 @@ def metrics_prometheus():
 
 
 @app.get("/metrics/history")
-def metrics_history(limit: int = 50, db: Session = Depends(get_db)):
+def metrics_history(limit: int = Query(default=50, ge=1, le=1000), db: Session = Depends(get_db)):
     rows = db.scalars(
         select(MetricRecord).order_by(MetricRecord.timestamp.desc()).limit(limit)
     ).all()
