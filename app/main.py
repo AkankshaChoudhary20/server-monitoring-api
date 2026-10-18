@@ -20,6 +20,8 @@ from app.models import MetricRecord
 
 
 def init_db(retries: int = 10, delay: float = 1.5) -> None:
+    if type(retries) is not int or retries < 1:
+        raise ValueError("retries must be a positive integer")
     for attempt in range(1, retries + 1):
         try:
             Base.metadata.create_all(bind=engine)
