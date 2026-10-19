@@ -56,8 +56,12 @@ def metrics(db: Session = Depends(get_db)):
         disk_usage=report["disk"],
         status=report["status"],
     )
-    db.add(record)
-    db.commit()
+    try:
+        db.add(record)
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise
 
     return report
 
@@ -103,3 +107,4 @@ def metrics_history(limit: int = Query(default=50, ge=1, le=1000), db: Session =
         }
         for row in reversed(rows)
     ]
+
