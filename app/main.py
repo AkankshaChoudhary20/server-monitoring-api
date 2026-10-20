@@ -1,3 +1,4 @@
+import asyncio
 import time
 from contextlib import asynccontextmanager
 
@@ -34,7 +35,7 @@ def init_db(retries: int = 10, delay: float = 1.5) -> None:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    init_db()
+    await asyncio.to_thread(init_db)
     yield
 
 
@@ -107,4 +108,5 @@ def metrics_history(limit: int = Query(default=50, ge=1, le=1000), db: Session =
         }
         for row in reversed(rows)
     ]
+
 
