@@ -1,4 +1,5 @@
 import asyncio
+import math
 import time
 from contextlib import asynccontextmanager
 
@@ -23,6 +24,9 @@ from app.models import MetricRecord
 def init_db(retries: int = 10, delay: float = 1.5) -> None:
     if type(retries) is not int or retries < 1:
         raise ValueError("retries must be a positive integer")
+    if (type(delay) not in (int, float) or not 0 <= delay <= 1.7976931348623157e308
+            or not math.isfinite(delay)):
+        raise ValueError("delay must be a finite nonnegative number")
     for attempt in range(1, retries + 1):
         try:
             Base.metadata.create_all(bind=engine)
@@ -108,5 +112,3 @@ def metrics_history(limit: int = Query(default=50, ge=1, le=1000), db: Session =
         }
         for row in reversed(rows)
     ]
-
-
