@@ -40,7 +40,10 @@ def init_db(retries: int = 10, delay: float = 1.5) -> None:
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await asyncio.to_thread(init_db)
-    yield
+    try:
+        yield
+    finally:
+        await asyncio.to_thread(engine.dispose)
 
 
 app = FastAPI(title="Server Monitoring API", lifespan=lifespan)
